@@ -92,11 +92,16 @@ class Singer():
             process = subprocess.Popen(["keytool","-list","-v","-keystore",self.keystore ,"-storepass",self.password],
                                     stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             stdout,stderr = process.communicate()
-            output = stdout.decode("utf-8")
+            output = stdout.decode("gbk")
             print(output)
             print(stderr)
             alias_pattern = re.compile(r"别名:(.+)")
             alias_list = alias_pattern.findall(output)
+
+            for index, item in enumerate(alias_list):
+                # 👇️ only updating values in the list
+                alias_list[index] = item[1:len(item)-1]
+
 
             if process.poll() is None:
                 process.kill()
@@ -104,7 +109,7 @@ class Singer():
 
 
             if alias_list:
-                print("please choose a alias:\n" + str(alias_list))
+                print("please choose a alias:" + str(alias_list))
                 alias = input()
                 while alias not in alias_list:
                     print("please input correct alias name!:")
@@ -121,14 +126,15 @@ class Singer():
 
 
     def generate_signkey(self):
-        cmd = "keytool -genkeypair -alias "+self.alias+" -keyalg RSA -keysize 2048 -validity 365000 -keystore " + self.keystore +".jks"
+        cmd = "keytool -genkeypair -alias "+self.alias+" -keyalg RSA -keysize 2048 -validity 365000 -keystore " + self.keystore  + ""
         ret = os.system(cmd)
         if ret != 0:
             print("someting wrong with generate signkey")
 
 
     def sign_apk(self):
-        cmd = "jarsigner -verbose -sigalg RSA -digestalg SHA1 -keystore "+ self.keystore + " " + self.apk_path + " " + self.alias
+        print("运行")
+        cmd = "jarsigner.exe -verbose -sigalg MD5withRSA -digestalg SHA1 -keystore "+ self.keystore + " " + self.apk_path + " " + self.alias
         ret = os.system(cmd)
         if ret != 0 :
             print("someting wrong with sign_apk")
@@ -144,7 +150,9 @@ class Singer():
                 break
         self.apk_path = apk_path
         self.choose_keystore()
+        print("开始选择密钥")
         self.choose_alias()
+        print("开始签名")
         self.sign_apk()
 
 
