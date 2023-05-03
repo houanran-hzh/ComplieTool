@@ -3,12 +3,16 @@ import glob
 import time
 import subprocess
 import re
-
+from Complier import run_complier
 
 
 """
 apktool实现反编译和重打包
 """
+
+
+
+
 def check_java_env():
     process = subprocess.Popen("java",stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     stdout,stderr = process.communicate()
@@ -17,22 +21,6 @@ def check_java_env():
         print("please check your jre or jdk config!!!")
         time.sleep(2)
         exit()
-
-def decompile(apk_path):
-    cmd = "java -jar apktool.jar d " + apk_path
-    ret = os.system(cmd)
-    if ret != 0 :
-        print("someting wrong with decomplie apk")
-
-
-def repackage(smali_path):
-    cmd = "java -jar apktool.jar b " + smali_path + " -o " + smali_path +"_rpkg.apk"
-    ret = os.system(cmd)
-    if ret != 0 :
-        print("someting wrong with repackage apk")
-
-
-
 
 """
 检查当前是否存在签名文件
@@ -168,28 +156,11 @@ if __name__ == '__main__':
     while True:
         print("please input:d for decomplie,b for repackage,s for signing model,exit for exit:")
         order = input()
-        if order == 'd':
-            print("please input your apk path:")
-            while True:
-                apk_path = input()
-                if not os.path.exists(apk_path):
-                    print("please input the right path:xxx/xxx/xxx/xx.apk")
-                else:
-                    break
-            decompile(apk_path)
-            print("decomplie finished!")
+        if order == 'd' or order == 'b':
+            run_complier(order)
 
 
-        elif order == 'b':
-            print("please input your smali file path:")
-            while True:
-                smali_path = input()
-                if not os.path.exists(smali_path):
-                    print("please input the right smali path:xxx/xxx/xxx/")
-                else:
-                    break
-            repackage(smali_path) 
-            print("repackage finished!")
+
 
 
         elif order == 's':
