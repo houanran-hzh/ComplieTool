@@ -1,6 +1,11 @@
 import os
 #需要apktool，和这个脚本放在同一个文件夹，输入输出改个文件夹就行，会遍历文件夹下所有文件
 
+
+
+
+
+
 def getFiles(FilePath):
     ApkList = []
     for filepath,dirnames,filenames in os.walk(FilePath):
@@ -30,6 +35,13 @@ def batchDecomplie():
             return
         print(apk)
         singleDecomplie(apk)
+
+
+
+
+def runBatch():
+
+
 
 if __name__ == '__main__':
     FilePath = "D:\\test\\datasets\\train\\adware\\"
